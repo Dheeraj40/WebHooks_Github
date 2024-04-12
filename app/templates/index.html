@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Updates</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js" integrity="sha512-VqYJnGEGGncM0v5YDCrhkA04sIYkDLg4V8yBjm1A8QjP5w+9yNaw2cd0o1LYv1wL1xSjC1npkLQv7tVk3QIKng==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var socket = io.connect('http://localhost:5000');
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('updates', function(updates) {
+            console.log('Received updates:', updates);
+            // Update UI with the received updates
+        });
+    </script>
+</head>
+<body>
+    <div class="data">
+        <div id="output"></div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        function update(){
+            $.get("/webhook/fetcher", function(data){
+                // Split the data into individual lines
+                var lines = data.split("\n");
+                var outputHtml = "";
+                // Iterate over each line and format it
+                lines.forEach(function(line) {
+                    outputHtml += "<p>" + line + "</p>";
+                });
+                // Update the output container with the formatted HTML
+                $("#output").html(outputHtml);
+            });
+        }
+        update()
+        var intervalId = setInterval(function() {
+            update()
+        }, 15000); // Update every 15 seconds
+    </script>
+    
+    
+</body>
+</html>
